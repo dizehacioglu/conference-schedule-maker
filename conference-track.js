@@ -1,19 +1,3 @@
-/*
-
-You are planning a big programming conference and have received many proposals which have passed the initial screen process but you're having trouble fitting them into the time constraints of the day -- there are so many possibilities! So you write a program to do it for you.
-  - The conference has multiple tracks each of which has a morning and afternoon session.
-  - Each session contains multiple talks.
-  - Morning sessions begin at 9am and must finish by 12 noon, for lunch.
-  - Afternoon sessions begin at 1pm and must finish in time for the networking event.
-  - The networking event can start no earlier than 4:00 and no later than 5:00.
-  - No talk title has numbers in it.
-  - All talk lengths are either in minutes (not hours) or lightning (5 minutes).
-  - Presenters will be very punctual; there needs to be no gap between sessions.
-
-*/
-
-// var Track = require('./Track');
-
 function readAndCleanData(){
   var talksRaw = [
     'Writing Fast Tests Against Enterprise Rails 60min',
@@ -40,61 +24,61 @@ function readAndCleanData(){
   var talks = [];
 
   talksRaw.forEach(function(talk){
-    talks.push({
-      title: talk.slice(0, talk.length-6),
-      duration: talk.slice(talk.length-5, talk.length-3) === 'tn' ? 5 : parseInt(talk.slice(talk.length-5, talk.length-3))
-    })
+    talks.push(new Talk(talk.slice(0, talk.length-6), talk.slice(talk.length-5, talk.length-3) === 'tn' ? 5 : parseInt(talk.slice(talk.length-5, talk.length-3))))
   })
 
   return talks;
 }
 
+function createTracks(talks){
+  var tracks = [];
+  var track = new Track();
 
-var talks = readAndCleanData();
-var tracks = [];
-
-// first session can be a total of 3 hours (180 minutes)
-// second session can be a total of 3-4 hours (180-240 minutes)
-
-var Session = function(timeOfDay){
-  this.timeOfDay = timeOfDay;
-  this.totalTime = 0;
-  this.talks = [];
-}
-
-var Track = function(){
-  this.sessions = [new Session('morning'), new Session('afternoon')];
-}
-
-var track = new Track();
-
-while(talks.length > 0){
-  var currTalk = talks.shift();
-  if(track.sessions[0].totalTime + currTalk.duration <= 180){
-    track.sessions[0].talks.push(currTalk);
-    track.sessions[0].totalTime += currTalk.duration;
+  while(talks.length > 0){
+    var currTalk = talks.shift();
+    // first session can be a total of 3 hours (180 minutes)
+    if(track.sessions[0].totalTime + currTalk.duration <= 180){
+      track.sessions[0].talks.push(currTalk);
+      track.sessions[0].totalTime += currTalk.duration;
+    }
+    // second session can be a total of 3-4 hours (180-240 minutes)
+    else if(track.sessions[2].totalTime + currTalk.duration <= 240){
+      track.sessions[2].talks.push(currTalk);
+      track.sessions[2].totalTime += currTalk.duration;
+    } else {
+      talks.unshift(currTalk);
+      tracks.push(track);
+      track = new Track();
+    }
   }
-  else if(track.sessions[1].totalTime + currTalk.duration <= 240){
-    track.sessions[1].talks.push(currTalk);
-    track.sessions[1].totalTime += currTalk.duration;
-  } else {
-    talks.unshift(currTalk);
-    tracks.push(track);
-    track = new Track();
+  tracks.push(track);
+
+  return tracks;
+}
+
+function createSchedule(){
+  var talks = readAndCleanData();
+  var tracks = createTracks(talks);
+
+  for (var i = 0; i < tracks.length; i++) {
+    console.log('Track ' + (i+1));
+    console.log('---');
+    var time = tracks[i].start;
+    tracks[i].sessions.forEach(function(session){
+      if(session.timeOfDay !== 'lunch' && session.timeOfDay !== 'networking'){
+        session.talks.forEach(function(talk){
+          console.log(time.toString() + ' ' + talk.title);
+          time.addMinutes(talk.duration);
+        })
+      } else if(session.timeOfDay === 'lunch') {
+        time = new Time(12, 0);
+        console.log(time.toString() + ' Lunch');
+        time.addMinutes(60);
+      } else if(session.timeOfDay == 'networking'){
+        time = new Time(17, 0);
+        console.log(time.toString() + ' Networking');
+      }
+    })
+    console.log();
   }
 }
-tracks.push(track);
-
-console.log('TRACKS--------------------------------');
-
-for (var i = 0; i < tracks.length; i++) {
-  // console.log(tracks[i]);
-  console.log(tracks[i].sessions[0].talks);
-  console.log(tracks[i].sessions[1].talks);
-  console.log();
-  console.log();
-}
-
-// function createTracks(talks){
-//
-// }
