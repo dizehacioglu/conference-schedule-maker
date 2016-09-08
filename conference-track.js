@@ -8,13 +8,17 @@ const morningSessionHours = 180;
 const afternoonSessionHours = 240;
 
 function createSchedule(){
-  var talks = readAndCleanData(process.argv[2]);
+  var talks = readAndCleanData(__dirname + '/' + process.argv[2]);
   var tracks = createTracks(talks);
   printSchedule(tracks);
 }
 
 function readAndCleanData(file){
-  var dataFromFile = fs.readFileSync(file);
+  try{
+    var dataFromFile = fs.readFileSync(file);
+  } catch(e){
+    throw 'Please submit a valid .txt file';
+  }
 
   var talksRaw = dataFromFile.toString().split('\n');
   if(talksRaw[talksRaw.length - 1] === ''){
