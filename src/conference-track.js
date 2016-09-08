@@ -8,7 +8,7 @@ const morningSessionHours = 180;
 const afternoonSessionHours = 240;
 
 function createSchedule(){
-  var talks = readAndCleanData(__dirname + '/' + process.argv[2]);
+  var talks = readAndCleanData('../data/' + process.argv[2]);
   var tracks = createTracks(talks);
   printSchedule(tracks);
 }
@@ -17,6 +17,7 @@ function readAndCleanData(file){
   try{
     var dataFromFile = fs.readFileSync(file);
   } catch(e){
+    console.log(file);
     throw 'Please submit a valid .txt file';
   }
 
