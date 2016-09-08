@@ -3,3 +3,5 @@ var Session = function(timeOfDay){
   this.totalTime = 0;
   this.talks = [];
 }
+
+module.exports = Session;

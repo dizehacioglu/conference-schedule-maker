@@ -1,34 +1,44 @@
-function readAndCleanData(){
-  var talksRaw = [
-    'Writing Fast Tests Against Enterprise Rails 60min',
-    'Overdoing it in Python 45min',
-    'Lua for the Masses 30min',
-    'Ruby Errors from Mismatched Gem Versions 45min',
-    'Common Ruby Errors 45min',
-    'Rails for Python Developers lightning',
-    'Communicating Over Distance 60min',
-    'Accounting-Driven Development 45min',
-    'Woah 30min',
-    'Sit Down and Write 30min',
-    'Pair Programming vs Noise 45min',
-    'Rails Magic 60min',
-    'Ruby on Rails: Why We Should Move On 60min',
-    'Clojure Ate Scala (on my project) 45min',
-    'Programming in the Boondocks of Seattle 30min',
-    'Ruby vs. Clojure for Back-End Development 30min',
-    'Ruby on Rails Legacy App Maintenance 60min',
-    'A World Without HackerNews 30min',
-    'User Interface CSS in Rails Apps 30min'
-  ];
+var fs = require('fs');
+var Talk = require('./Talk.js');
+var Time = require('./Time.js')
+var Session = require('./Session.js');
+var Track = require('./Track.js');
+
+const morningSessionHours = 180;
+const afternoonSessionHours = 240;
+
+function createSchedule(){
+  var talks = readAndCleanData(process.argv[2]);
+  var tracks = createTracks(talks);
+  printSchedule(tracks);
+}
+
+function readAndCleanData(file){
+  var dataFromFile = fs.readFileSync(file);
+
+  var talksRaw = dataFromFile.toString().split('\n');
+  if(talksRaw[talksRaw.length - 1] === ''){
+    talksRaw = talksRaw.slice(0, talksRaw.length-1);
+  }
 
   var talks = [];
 
   talksRaw.forEach(function(talk){
-    talks.push(new Talk(talk.slice(0, talk.length-6), talk.slice(talk.length-5, talk.length-3) === 'tn' ? 5 : parseInt(talk.slice(talk.length-5, talk.length-3))))
+    var title = ''
+    var duration = '';
+    var lightningIndex = talk.indexOf('lightning');
+    if(lightningIndex > 0){
+      duration = '5';
+      title = talk.slice(0, lightningIndex);
+    } else {
+      title = talk.replace(/\d+min/, '');
+      duration = talk.slice(talk.search(/\d+min/)).replace(/min/, '');
+    }
+    talks.push(new Talk(title, parseInt(duration)));
   })
-
   return talks;
 }
+
 
 function createTracks(talks){
   var tracks = [];
@@ -37,12 +47,12 @@ function createTracks(talks){
   while(talks.length > 0){
     var currTalk = talks.shift();
     // first session can be a total of 3 hours (180 minutes)
-    if(track.sessions[0].totalTime + currTalk.duration <= 180){
+    if(track.sessions[0].totalTime + currTalk.duration <= morningSessionHours){
       track.sessions[0].talks.push(currTalk);
       track.sessions[0].totalTime += currTalk.duration;
     }
     // second session can be a total of 3-4 hours (180-240 minutes)
-    else if(track.sessions[2].totalTime + currTalk.duration <= 240){
+    else if(track.sessions[2].totalTime + currTalk.duration <= afternoonSessionHours){
       track.sessions[2].talks.push(currTalk);
       track.sessions[2].totalTime += currTalk.duration;
     } else {
@@ -56,10 +66,7 @@ function createTracks(talks){
   return tracks;
 }
 
-function createSchedule(){
-  var talks = readAndCleanData();
-  var tracks = createTracks(talks);
-
+function printSchedule(tracks){
   for (var i = 0; i < tracks.length; i++) {
     console.log('Track ' + (i+1));
     console.log('---');
@@ -74,7 +81,7 @@ function createSchedule(){
         time = new Time(12, 0);
         console.log(time.toString() + ' Lunch');
         time.addMinutes(60);
-      } else if(session.timeOfDay == 'networking'){
+      } else if(session.timeOfDay === 'networking'){
         time = new Time(17, 0);
         console.log(time.toString() + ' Networking');
       }
@@ -82,3 +89,5 @@ function createSchedule(){
     console.log();
   }
 }
+
+createSchedule();

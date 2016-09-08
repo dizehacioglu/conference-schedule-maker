@@ -18,3 +18,5 @@ Time.prototype.toString = function(){
   + (this.minutes.toString().length === 1 ? '0' + this.minutes : this.minutes)
   + (this.hours >= 12 ? 'PM' : 'AM');
 }
+
+module.exports = Time;
