@@ -23,7 +23,7 @@ Note that depending on how you choose to complete this problem, your solution ma
 ### How to Run
   1. Download the latest version of [Node](https://nodejs.org/en/download/).
     - You can follow directions here if you want to [install Node via Homebrew](https://changelog.com/install-node-js-with-homebrew-on-os-x/).
-  1. Save your .txt file in the same folder as the rest of the submitted files.
+  1. Save your .txt file in the same folder as the rest of the files.
     - There is already a talks.txt file in there, with the given test input.
   1. Open Terminal.
   1. Run `node conference-track.js [fileName].txt`
