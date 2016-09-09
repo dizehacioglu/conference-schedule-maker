@@ -40,11 +40,11 @@ I loved solving this problem and can't wait to hear your feedback.
 
 ### Assumptions
 I must admit, I feel I made a lot of assumptions while writing this program.
-The assumption that made the largest impact on my algorithm was the belief that talks will fit into the minimum allotted time for the Conference.
-  - This would mean that each permutation of talks could fit into the Conference (even if the Conference had to have multiple Tracks).
-Another assumption I made was that it was okay if the Talk let out a little bit before Lunch.
+I made the assumption that it was okay if the Talk let out a little bit before Lunch.
 I made the assumption that the data given to me in the raw talks.txt file would always be valid.
 I made the assumption that the word "Lightning" would not be in the title of any talk.
+The assumption that made the largest impact on my algorithm was the belief that talks will fit into the minimum allotted time for the Conference.
+  - This would mean that each permutation of talks could fit into the Conference (even if the Conference had to have multiple Tracks).
 
 ### How to Run
   1. Download the latest version of [Node](https://nodejs.org/en/download/).
