@@ -3,10 +3,9 @@ Time class - to help facilitate scheduling
 The Date() class in JS was way too robust
 */
 
-var Time = function(hours, minutes, seconds){
+var Time = function(hours, minutes){
   this.hours = hours;
   this.minutes = minutes;
-  this.seconds = seconds || 0;
 }
 
 Time.prototype.addMinutes = function(minutes){

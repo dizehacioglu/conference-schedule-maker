@@ -164,6 +164,3 @@ function printSchedule(tracks){
     console.log();
   }
 }
-
-// // Run 'em!
-// createSchedule();
