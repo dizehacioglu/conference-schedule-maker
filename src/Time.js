@@ -1,3 +1,8 @@
+/*
+Time class - to help facilitate scheduling
+The Date() class in JS was way too robust
+*/
+
 var Time = function(hours, minutes, seconds){
   this.hours = hours;
   this.minutes = minutes;
